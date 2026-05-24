@@ -1,17 +1,14 @@
-//
-//  LinkaseApp.swift
-//  Linkase
-//
-//  Created by Ankur Kumar on 24/05/26.
-//
-
 import SwiftUI
 
 @main
 struct LinkaseApp: App {
+    @State private var container = AppContainer()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
+                .environment(\.container, container)
+                .environment(container)
         }
     }
 }
