@@ -19,7 +19,7 @@ struct ManualEntryForm: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("Apple Intelligence is unavailable — fill in details to save.", systemImage: "info.circle")
+            Label("Auto-fill couldn't run on this page — enter the details below.", systemImage: "info.circle")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Text(prefill.url.absoluteString)

@@ -7,12 +7,14 @@ struct LinkIngestor: Sendable {
 
     enum IngestError: Error, LocalizedError {
         case invalidURL
-        case aiUnavailable(ScrapedPage, MetadataExtractor.ExtractorError)
+        /// AI extraction couldn't produce metadata — caller should fall back to manual entry.
+        /// Carries the scraped page (so the manual form can pre-fill) and the underlying reason.
+        case needsManualEntry(ScrapedPage, any Error)
 
         var errorDescription: String? {
             switch self {
             case .invalidURL: return "That doesn't look like a valid URL."
-            case .aiUnavailable(_, let inner): return inner.errorDescription
+            case .needsManualEntry(_, let inner): return (inner as? LocalizedError)?.errorDescription ?? inner.localizedDescription
             }
         }
     }
@@ -28,11 +30,10 @@ struct LinkIngestor: Sendable {
         let metadata: ExtractedMetadata
         do {
             metadata = try await extractor.extract(from: page)
-        } catch let error as MetadataExtractor.ExtractorError {
-            if case .aiUnavailable = error {
-                throw IngestError.aiUnavailable(page, error)
-            }
-            throw error
+        } catch {
+            // Any failure at the AI step routes to manual entry — unavailable model,
+            // unsupported language, guardrail trip, network/inference failure, etc.
+            throw IngestError.needsManualEntry(page, error)
         }
 
         let link = Link(

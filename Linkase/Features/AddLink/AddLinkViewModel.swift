@@ -24,7 +24,7 @@ final class AddLinkViewModel {
             _ = try await ingestor.ingest(rawURL: raw)
             input = ""
             phase = .idle
-        } catch LinkIngestor.IngestError.aiUnavailable(let page, _) {
+        } catch LinkIngestor.IngestError.needsManualEntry(let page, _) {
             phase = .manualEntry(prefill: ManualPrefill(
                 url: page.finalURL,
                 host: page.host,

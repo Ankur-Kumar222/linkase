@@ -165,7 +165,7 @@ private struct ShareRootView: View {
             state = .saved
             try? await Task.sleep(for: .milliseconds(700))
             onDone()
-        } catch LinkIngestor.IngestError.aiUnavailable(let page, _) {
+        } catch LinkIngestor.IngestError.needsManualEntry(let page, _) {
             manualPrefill = ManualPrefill(
                 url: page.finalURL,
                 host: page.host,
